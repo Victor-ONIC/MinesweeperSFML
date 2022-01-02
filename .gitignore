@@ -1,0 +1,6 @@
+*.dll
+/bin
+/include
+/lib
+/.vscode
+Makefile
