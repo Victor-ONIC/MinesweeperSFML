@@ -1,8 +1,10 @@
 #include "Cell.h"
 
 
-// Constructeur: initialise position.
-Cell::Cell(int row, int col) : position(sf::Vector2i(row, col)), state(Cell::State::BASE) {}
+// Constructeur: initialise les variables.
+Cell::Cell(int row, int col) : position(sf::Vector2i(row, col)), state(Cell::State::BASE) 
+{
+}
 
 // Obtenir la valeur de position.
 sf::Vector2i Cell::get_position() {

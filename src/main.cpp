@@ -9,6 +9,9 @@ int main() {
     sf::RenderWindow window;
     window.create(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), L"MinesweeperSFML", sf::Style::Titlebar | sf::Style::Close);
 
+    // Create Field object called field.
+    Field field(ROWS, COLUMNS);
+
     while (window.isOpen()) {
 
         // Event loop.
@@ -23,7 +26,10 @@ int main() {
         }
 
         // Affichage.
-        window.clear(sf::Color::White);
+        window.clear(sf::Color::Black);
+
+        field.display(window);
+
         window.display();
 
     }
