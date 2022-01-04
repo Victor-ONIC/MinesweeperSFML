@@ -23,7 +23,7 @@ int main() {
         }
 
         // Affichage.
-        window.clear(sf::Color::Black);
+        window.clear(sf::Color::White);
         window.display();
 
     }
