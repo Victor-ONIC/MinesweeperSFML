@@ -1,8 +1,16 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+
 #include "Cell.h"
 #include "Field.h"
 
-// Dimensions de la fenêtre 1
-int const WIN_WIDTH = 800;
-int const WIN_HEIGHT = 600;
+
+// Constantes
+int const ROWS = 9;
+int const COLUMNS = 9;
+int const MINES = 10;
+float const CELL_SIZE = 16;
+
+// Dimensions de la fenêtre
+int const WIN_WIDTH = ROWS * CELL_SIZE;
+int const WIN_HEIGHT = COLUMNS * CELL_SIZE;
