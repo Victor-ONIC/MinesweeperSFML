@@ -3,8 +3,5 @@
 
 class Cell {
 
-private:
-
-public:
 
 };

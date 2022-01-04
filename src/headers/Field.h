@@ -10,8 +10,5 @@
 
 class Field {
 
-private:
-
-public:
 
 };
