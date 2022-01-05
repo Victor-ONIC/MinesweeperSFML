@@ -7,12 +7,12 @@ Cell::Cell(int row, int col) : position(sf::Vector2i(row, col)), state(Cell::Sta
 }
 
 // Obtenir la valeur de position.
-sf::Vector2i Cell::get_position() {
+sf::Vector2i Cell::get_position() const {
     return position;
 }
 
 // Obtenir la valeur de state.
-Cell::State Cell::get_state() {
+Cell::State Cell::get_state() const {
     return state;
 }
 // Définir la valeur de state.

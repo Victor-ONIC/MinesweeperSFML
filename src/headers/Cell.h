@@ -8,9 +8,9 @@ public:
 
     Cell(int row, int col);
 
-    sf::Vector2i get_position();
-    State get_state();
-
+    sf::Vector2i get_position() const;
+    State get_state() const;
+    
     void set_state(State state);
 
 private:

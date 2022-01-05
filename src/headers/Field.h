@@ -1,8 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include <ctime>
-#include <cstdlib>
+#include <iostream>
 
 #include "main.h"
 #include "Cell.h"
