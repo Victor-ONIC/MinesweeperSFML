@@ -1,4 +1,6 @@
 // LET'S JUST DO A 9X9 MINESWEEPER TO BEGIN WITH ALRIGHT
+// Remove all "debug" marked lines.
+// Check all "PATH" marked lines.
 
 #include "main.h"
 
@@ -23,6 +25,31 @@ int main() {
                 window.close();
             }
 
+            // Fermer la fenêtre quand on appuie sur Échap.
+            if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::Escape) window.close();
+            }
+
+            // Lorsque le clic GAUCHE est relaché, on creuse.
+            // Seulement si la case est Cell::State::BASE, sinon ne rien faire.
+
+            if (event.type == sf::Event::MouseButtonReleased) {
+                int cell_position_row = event.mouseButton.y / CELL_SIZE;
+                int cell_position_col = event.mouseButton.x / CELL_SIZE;
+
+                switch (event.mouseButton.button) {
+
+                    case sf::Mouse::Left:
+                        field.dig(cell_position_row, cell_position_col);
+                        break;
+
+                    case sf::Mouse::Right:
+                        field.flag(cell_position_row, cell_position_col);
+                        break;
+
+                }
+
+            }
         }
 
         // Affichage.

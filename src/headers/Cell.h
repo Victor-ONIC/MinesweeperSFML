@@ -4,17 +4,25 @@
 class Cell {
 
 public:
-    enum class State { BASE, DUG, MINE, FLAG, BOOM };
+    enum class State { BASE, DUG, MINE, FLAG };
+
+    struct coord {
+        int row;
+        int col;
+    };
 
     Cell(int row, int col);
 
-    sf::Vector2i get_position() const;
+    coord get_position() const;
     State get_state() const;
-    
+    int get_mines_around() const;
+
     void set_state(State state);
+    void set_mines_around(int number);
 
 private:
-    sf::Vector2i position;
+    coord position;
     State state;
+    int mines_around;
 
 };

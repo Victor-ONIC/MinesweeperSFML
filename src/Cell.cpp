@@ -2,12 +2,12 @@
 
 
 // Constructeur: initialise les variables.
-Cell::Cell(int row, int col) : position(sf::Vector2i(row, col)), state(Cell::State::BASE) 
+Cell::Cell(int row, int col) : position(coord{row, col}), state(Cell::State::BASE), mines_around(0)
 {
 }
 
 // Obtenir la valeur de position.
-sf::Vector2i Cell::get_position() const {
+Cell::coord Cell::get_position() const {
     return position;
 }
 
@@ -20,3 +20,9 @@ void Cell::set_state(Cell::State new_state) {
     state = new_state;
 }
 
+int Cell::get_mines_around() const {
+    return mines_around;
+}
+void Cell::set_mines_around(int number) {
+    mines_around = number;
+}

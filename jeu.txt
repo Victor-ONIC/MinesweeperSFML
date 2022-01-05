@@ -14,7 +14,7 @@ Start with the empty window.
 Create the game matrix.
 Display the grid. Each cell in the matrix draws one square.
 
-(start loop) Wait for user input.
+(start loop) Wait for user input.       <---
 
 Dig the cell which the user clicked on.
 (first time) Generate the mines.
