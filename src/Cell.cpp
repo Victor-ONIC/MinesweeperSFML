@@ -23,6 +23,6 @@ void Cell::set_state(Cell::State new_state) {
 int Cell::get_mines_around() const {
     return mines_around;
 }
-void Cell::set_mines_around(int number) {
-    mines_around = number;
+void Cell::increment_mines_around(int number) {
+    mines_around += number;
 }

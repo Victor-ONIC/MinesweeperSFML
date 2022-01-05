@@ -21,13 +21,24 @@ Cell *Field::get_cell(int row, int col) {
 // Pose un drapeau s'il n'y en a pas. Le retire s'il y en a déjà un.
 void Field::flag(int row, int col) {
 
-    if (get_cell(row, col)->get_state() == Cell::State::BASE || get_cell(row, col)->get_state() == Cell::State::MINE) {
-        get_cell(row, col)->set_state(Cell::State::FLAG);
-    }
-    else if (get_cell(row, col)->get_state() == Cell::State::FLAG) {
-        get_cell(row, col)->set_state(Cell::State::BASE);
-    }
+    switch (get_cell(row, col)->get_state()) {
 
+        case Cell::State::BASE:
+            get_cell(row, col)->set_state(Cell::State::FLAG_BASE);
+            break;
+
+        case Cell::State::MINE:
+            get_cell(row, col)->set_state(Cell::State::FLAG_MINE);
+            break;
+            
+        case Cell::State::FLAG_BASE:
+            get_cell(row, col)->set_state(Cell::State::BASE);
+            break;
+            
+        case Cell::State::FLAG_MINE:
+            get_cell(row, col)->set_state(Cell::State::MINE);
+            break;   
+    }
 }
 
 // Creuse.
@@ -37,6 +48,7 @@ void Field::dig(int row, int col) {
         first_digging = true;
         init_mines(row, col);
         init_mines_around();
+        cout_func();
     }
 
     // Si la cellule n'est pas d'état BASE ou MINE, alors on ne peut pas creuser.
@@ -91,14 +103,42 @@ void Field::init_mines_around() {
 
             // Si la case contient une mine, on met mines_around à -1.
             if (get_cell(i_row, i_col)->get_state() == Cell::State::MINE) {
-                get_cell(i_row, i_col)->set_mines_around(-1);
+                get_cell(i_row, i_col)->increment_mines_around(9);
             }
+            else {
+                // Compter les mines autour de la case [i_row,i_col]
+                for (int i_row_increment = -1; i_row_increment < 2; i_row_increment++) {
+                    for (int i_col_increment = -1; i_col_increment < 2; i_col_increment++) {
 
-            get_cell(i_row, i_col)->set_mines_around(1);
+                        // Si la case [i_row + i_row_increment, i_col + i_col_increment] est out of bounds on l'ignore.
+                        // On ignore aussi la case [i_row,i_col] elle-même.
+                        if ((i_row_increment == 0 && i_col_increment == 0) ||
+                            i_row + i_row_increment < 0 || i_row + i_row_increment >= ROWS ||
+                            i_col + i_col_increment < 0 || i_col + i_col_increment >= COLUMNS)
+                        {
+                            continue;
+                        }
 
+                        // Si la case est une mine, on incrémente mines_around.
+                        if (get_cell(i_row + i_row_increment, i_col + i_col_increment)->get_state() == Cell::State::MINE) {
+                            get_cell(i_row, i_col)->increment_mines_around();
+                        }
+
+                    }
+                }
+            }
         }
     }
 
+}
+
+void Field::cout_func() {  // debug
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLUMNS; j++) {
+            std::cout << get_cell(i,j)->get_mines_around() << ' ';
+        }
+        std::cout << '\n';
+    }
 }
 
 // Displays the game matrix to the window.
@@ -111,37 +151,25 @@ void Field::display(sf::RenderWindow &window) {
     for (int i_row = 0; i_row < ROWS; i_row++) {
         for (int i_col = 0; i_col < COLUMNS; i_col++) {
 
-            // Texture de la cellule.
+            // Texture de la cellule selon l'état de la case.
             switch (get_cell(i_row, i_col)->get_state()) {  // PATH
-            
+
                 case Cell::State::BASE:
-                    if (!texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(0, 0, 60, 60))) {
-                        std::cout << "------ ERROR: CAN'T LOAD TEXTURE ------";
-                    }
+                case Cell::State::MINE:
+                    texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(0, 0, 60, 60));
                     cellule.setTexture(texture);
                     break;
 
                 case Cell::State::DUG:
-                    if (!texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(60, 0, 60, 60))) {
-                        std::cout << "------ ERROR: CAN'T LOAD TEXTURE ------";
-                    }
-                    cellule.setTexture(texture);
-                    break;
-                
-                case Cell::State::FLAG:
-                    if (!texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(120, 0, 60, 60))) {
-                        std::cout << "------ ERROR: CAN'T LOAD TEXTURE ------";
-                    }
-                    cellule.setTexture(texture);
-                    break;
-                
-                case Cell::State::MINE:
-                    if (!texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(180, 0, 60, 60))) {
-                        std::cout << "------ ERROR: CAN'T LOAD TEXTURE ------";
-                    }
+                    texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(60, 0, 60, 60));
                     cellule.setTexture(texture);
                     break;
 
+                case Cell::State::FLAG_BASE:
+                case Cell::State::FLAG_MINE:
+                    texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(120, 0, 60, 60));
+                    cellule.setTexture(texture);
+                    break;
             }
 
             // Positionner le rectangle.

@@ -32,4 +32,6 @@ private:
     bool surroundings(int row, int col, int random_row, int random_col);
     void init_mines_around();
 
+    void cout_func();
+
 };

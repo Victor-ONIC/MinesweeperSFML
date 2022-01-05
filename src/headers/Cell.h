@@ -4,7 +4,7 @@
 class Cell {
 
 public:
-    enum class State { BASE, DUG, MINE, FLAG };
+    enum class State { BASE, DUG, MINE, FLAG_BASE, FLAG_MINE };
 
     struct coord {
         int row;
@@ -18,7 +18,7 @@ public:
     int get_mines_around() const;
 
     void set_state(State state);
-    void set_mines_around(int number);
+    void increment_mines_around(int number = 1);
 
 private:
     coord position;
