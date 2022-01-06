@@ -2,7 +2,7 @@
 
 
 // Constructeur.
-Field::Field(int rows, int cols) : state(Field::State::BASIC), first_digging(false) {
+Field::Field(int rows, int cols) : state(Field::State::BASIC), first_digging(false), discovered(0) {
 
     for (int i_row = 0; i_row < rows; i_row++) {
         for (int i_col = 0; i_col < cols; i_col++) {
@@ -48,7 +48,7 @@ void Field::dig(int row, int col) {
         first_digging = true;
         init_mines(row, col);
         init_mines_around();
-        cout_func();
+        cout_func();  // debug
     }
 
     // Si la cellule n'est pas d'état BASE ou MINE, alors on ne peut pas creuser.
@@ -58,11 +58,34 @@ void Field::dig(int row, int col) {
 
     if (get_cell(row, col)->get_state() == Cell::State::MINE) {
         std::cout << "PERDU!\n";
-        // Perdu.
+        // TODO perdu.
     }
 
     get_cell(row, col)->set_state(Cell::State::DUG);
-    // creuser récursif s'il n'a pas de mines autour. //TODO
+    discovered++;
+
+    // Creusée récursive s'il n'a pas de mines autour.
+    if (get_cell(row, col)->get_mines_around() == 0) {
+
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                
+                // Si la case est out of bounds, on ne la creuse pas.
+                if ((i == 0 && j == 0) || row + i < 0 || row + i >= ROWS || col + j < 0 || col + j >= COLUMNS) {
+                    continue;
+                }
+
+                // Si la case est déjà creusée, one ne la creuse pas.
+                if (get_cell(row + i, col + j)->get_state() == Cell::State::DUG) {
+                    continue;
+                }
+
+                dig(row + i, col + j);
+
+            }
+        }
+
+    }
 
 }
 
@@ -107,20 +130,20 @@ void Field::init_mines_around() {
             }
             else {
                 // Compter les mines autour de la case [i_row,i_col]
-                for (int i_row_increment = -1; i_row_increment < 2; i_row_increment++) {
-                    for (int i_col_increment = -1; i_col_increment < 2; i_col_increment++) {
+                for (int i = -1; i < 2; i++) {
+                    for (int j = -1; j < 2; j++) {
 
-                        // Si la case [i_row + i_row_increment, i_col + i_col_increment] est out of bounds on l'ignore.
+                        // Si la case [i_row + i, i_col + j] est out of bounds on l'ignore.
                         // On ignore aussi la case [i_row,i_col] elle-même.
-                        if ((i_row_increment == 0 && i_col_increment == 0) ||
-                            i_row + i_row_increment < 0 || i_row + i_row_increment >= ROWS ||
-                            i_col + i_col_increment < 0 || i_col + i_col_increment >= COLUMNS)
+                        if ((i == 0 && j == 0) ||
+                            i_row + i < 0 || i_row + i >= ROWS ||
+                            i_col + j < 0 || i_col + j >= COLUMNS)
                         {
                             continue;
                         }
 
                         // Si la case est une mine, on incrémente mines_around.
-                        if (get_cell(i_row + i_row_increment, i_col + i_col_increment)->get_state() == Cell::State::MINE) {
+                        if (get_cell(i_row + i, i_col + j)->get_state() == Cell::State::MINE) {
                             get_cell(i_row, i_col)->increment_mines_around();
                         }
 
@@ -135,7 +158,7 @@ void Field::init_mines_around() {
 void Field::cout_func() {  // debug
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLUMNS; j++) {
-            std::cout << get_cell(i,j)->get_mines_around() << ' ';
+            std::cout << get_cell(i,j)->get_mines_around() << "  ";
         }
         std::cout << '\n';
     }

@@ -27,6 +27,7 @@ private:
     State state;
 
     bool first_digging;
+    int discovered;
 
     void init_mines(int row, int col);
     bool surroundings(int row, int col, int random_row, int random_col);
