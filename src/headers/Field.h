@@ -12,12 +12,15 @@
 class Field {
 
 public:
-    enum class State { LOST, BASIC, HP, WON };
+    enum class State { LOST, GOING, WON };
 
     Field(int rows, int cols);
 
     Cell *get_cell(int row, int col);
+    State get_state() const;
+    int get_discovered() const;
 
+    void set_state(State);
     void flag(int row, int col);
     void dig(int row, int col);
     void display(sf::RenderWindow &window);

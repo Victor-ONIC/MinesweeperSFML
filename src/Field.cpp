@@ -2,7 +2,7 @@
 
 
 // Constructeur.
-Field::Field(int rows, int cols) : state(Field::State::BASIC), first_digging(false), discovered(0) {
+Field::Field(int rows, int cols) : state(Field::State::GOING), first_digging(false), discovered(0) {
 
     for (int i_row = 0; i_row < rows; i_row++) {
         for (int i_col = 0; i_col < cols; i_col++) {
@@ -16,6 +16,17 @@ Field::Field(int rows, int cols) : state(Field::State::BASIC), first_digging(fal
 // Renvoie la Cell à l'emplacement [row,col] du jeu.
 Cell *Field::get_cell(int row, int col) {
     return &matrix[row * COLUMNS + col];
+}
+
+Field::State Field::get_state() const {
+    return state;
+}
+void Field::set_state(Field::State new_state) {
+    state = new_state;
+}
+
+int Field::get_discovered() const {
+    return discovered;
 }
 
 // Pose un drapeau s'il n'y en a pas. Le retire s'il y en a déjà un.
@@ -48,7 +59,6 @@ void Field::dig(int row, int col) {
         first_digging = true;
         init_mines(row, col);
         init_mines_around();
-        cout_func();  // debug
     }
 
     // Si la cellule n'est pas d'état BASE ou MINE, alors on ne peut pas creuser.
@@ -57,8 +67,9 @@ void Field::dig(int row, int col) {
     }
 
     if (get_cell(row, col)->get_state() == Cell::State::MINE) {
-        std::cout << "PERDU!\n";
-        // TODO perdu.
+        get_cell(row, col)->set_state(Cell::State::BOOM);
+        set_state(Field::State::LOST);
+        return;
     }
 
     get_cell(row, col)->set_state(Cell::State::DUG);
@@ -155,15 +166,6 @@ void Field::init_mines_around() {
 
 }
 
-void Field::cout_func() {  // debug
-    for (int i = 0; i < ROWS; i++) {
-        for (int j = 0; j < COLUMNS; j++) {
-            std::cout << get_cell(i,j)->get_mines_around() << "  ";
-        }
-        std::cout << '\n';
-    }
-}
-
 // Displays the game matrix to the window.
 void Field::display(sf::RenderWindow &window) {
 
@@ -178,21 +180,53 @@ void Field::display(sf::RenderWindow &window) {
             switch (get_cell(i_row, i_col)->get_state()) {  // PATH
 
                 case Cell::State::BASE:
-                case Cell::State::MINE:
                     texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(0, 0, 60, 60));
                     cellule.setTexture(texture);
                     break;
 
-                case Cell::State::DUG:
-                    texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(60, 0, 60, 60));
+                case Cell::State::MINE:
+                    if (state != Field::State::GOING) {
+                        texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(720, 0, 60, 60));
+                        cellule.setTexture(texture);
+                        break;
+                    }
+                    else {
+                        texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(0, 0, 60, 60));
+                        cellule.setTexture(texture);
+                        break;
+                    }
+
+                case Cell::State::FLAG_BASE:
+                    if (state != Field::State::GOING) {
+                        texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(780, 0, 60, 60));
+                        cellule.setTexture(texture);
+                        break;
+                    }
+                    texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(120, 0, 60, 60));
                     cellule.setTexture(texture);
                     break;
 
-                case Cell::State::FLAG_BASE:
                 case Cell::State::FLAG_MINE:
                     texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(120, 0, 60, 60));
                     cellule.setTexture(texture);
                     break;
+                
+                case Cell::State::BOOM:
+                    texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(660, 0, 60, 60));
+
+                case Cell::State::DUG:
+                    int number = get_cell(i_row, i_col)->get_mines_around();
+
+                    if (number == 0) {
+                        texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(60, 0, 60, 60));
+                        cellule.setTexture(texture);
+                        break;
+                    }
+                    else {
+                        texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(120 + number * 60, 0, 60, 60));
+                        cellule.setTexture(texture);
+                        break;
+                    } 
             }
 
             // Positionner le rectangle.

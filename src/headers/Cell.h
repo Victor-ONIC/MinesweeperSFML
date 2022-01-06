@@ -4,7 +4,7 @@
 class Cell {
 
 public:
-    enum class State { BASE, DUG, MINE, FLAG_BASE, FLAG_MINE };
+    enum class State { BASE, DUG, MINE, FLAG_BASE, FLAG_MINE, BOOM };
 
     struct coord {
         int row;
