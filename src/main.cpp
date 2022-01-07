@@ -52,6 +52,8 @@ int main() {
                 // Clic gauche -> creuser.
                 // Clic droit -> drapeau.
                 if (event.type == sf::Event::MouseButtonPressed) {
+                    field.set_Marc(Field::Feeling::SCARED);
+
                     int cell_position_row = event.mouseButton.y / CELL_SIZE;
                     int cell_position_col = event.mouseButton.x / CELL_SIZE;
 
@@ -65,6 +67,9 @@ int main() {
                             field.flag(cell_position_row, cell_position_col);
                             break;
                     }
+                }
+                else if (event.type == sf::Event::MouseButtonReleased) {
+                    field.set_Marc(Field::Feeling::IDLE);
                 }
             }
 

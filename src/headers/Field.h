@@ -13,6 +13,7 @@ class Field {
 
 public:
     enum class State { LOST, GOING, WON };
+    enum class Feeling { IDLE, SCARED, DEAD, PROUD };
 
     Field(sf::Font &font);
     void reset();
@@ -24,6 +25,7 @@ public:
 
     void over();
     void set_state(State);
+    void set_Marc(Feeling feeling);
     void flag(int row, int col);
     void dig(int row, int col);
     void draw(sf::RenderWindow &window);
@@ -32,6 +34,7 @@ private:
     std::vector<Cell> matrix;  // matrix_i,j = matrix[i*COLUMNS+j]
     State state;
     sf::Text text;
+    Feeling marc_state;
 
     bool first_digging;
     int discovered;

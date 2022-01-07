@@ -2,7 +2,7 @@
 
 
 // Constructeur.
-Field::Field(sf::Font &font) : state(State::GOING), first_digging(false), discovered(0), flags(0), game_over(false) {
+Field::Field(sf::Font &font) : state(State::GOING), marc_state(Feeling::IDLE), first_digging(false), discovered(0), flags(0), game_over(false) {
 
     for (int i_row = 0; i_row < ROWS; i_row++) {
         for (int i_col = 0; i_col < COLUMNS; i_col++) {
@@ -32,6 +32,7 @@ void Field::reset() {
     flags = 0;
     first_digging = false;
     state = State::GOING;
+    marc_state = Feeling::IDLE;
 
     update_text(text);
 
@@ -39,6 +40,13 @@ void Field::reset() {
 
 void Field::over() {
     game_over = true;
+
+    if (state == State::LOST) {
+        set_Marc(Feeling::DEAD);
+    }
+    else if (state == State::WON) {
+        set_Marc(Feeling::PROUD);
+    }
 }
 bool Field::is_game_over() {
     return game_over;
@@ -58,6 +66,10 @@ void Field::set_state(Field::State new_state) {
 
 int Field::get_discovered() const {
     return discovered;
+}
+
+void Field::set_Marc(Feeling feeling) {
+    marc_state = feeling;
 }
 
 // Pose un drapeau s'il n'y en a pas. Le retire s'il y en a déjà un.
@@ -209,9 +221,10 @@ void Field::init_mines_around() {
 
 }
 
-// Displays the game matrix to the window.
+// Display
 void Field::draw(sf::RenderWindow &window) {
 
+    // La matrice du jeu
     sf::Texture texture;
     sf::Sprite cellule;
 
@@ -283,6 +296,40 @@ void Field::draw(sf::RenderWindow &window) {
         }
     }
 
+    // Le texte
     window.draw(text);
+
+    // Marc
+    sf::Texture Marc_texture;
+    sf::Sprite Marc;
+
+    switch (marc_state) {
+
+        case Feeling::IDLE:
+            Marc_texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(840, 0, 60, 60));
+            Marc.setTexture(Marc_texture);
+            break;
+
+        case Feeling::SCARED:
+            Marc_texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(900, 0, 60, 60));
+            Marc.setTexture(Marc_texture);
+            break;
+
+        case Feeling::PROUD:
+            Marc_texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(960, 0, 60, 60));
+            Marc.setTexture(Marc_texture);
+            break;
+
+        case Feeling::DEAD:
+            Marc_texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(1020, 0, 60, 60));
+            Marc.setTexture(Marc_texture);
+            break;
+    }
+
+    float Marc_position_X = WIN_WIDTH - (CELL_SIZE + MARC_MARGIN_X);
+    float Marc_position_Y = WIN_HEIGHT - (CELL_SIZE + MARC_MARGIN_Y);
+    Marc.setPosition(Marc_position_X, Marc_position_Y);
+
+    window.draw(Marc);
 
 }

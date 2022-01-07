@@ -17,5 +17,8 @@ constexpr int TEXT_SIZE = 60;
 constexpr int MARGIN_X = 10;
 constexpr int MARGIN_Y = 20;
 
+constexpr int MARC_MARGIN_X = 15;
+constexpr int MARC_MARGIN_Y = 10;
+
 constexpr int WIN_WIDTH = ROWS * CELL_SIZE;
 constexpr int WIN_HEIGHT = COLUMNS * CELL_SIZE + RECT_HEIGHT;
