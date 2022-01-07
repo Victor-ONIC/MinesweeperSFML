@@ -1,5 +1,4 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 
 class Cell {
 
@@ -12,6 +11,7 @@ public:
     };
 
     Cell(int row, int col);
+    void reset();
 
     coord get_position() const;
     State get_state() const;

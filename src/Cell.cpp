@@ -2,8 +2,13 @@
 
 
 // Constructeur: initialise les variables.
-Cell::Cell(int row, int col) : position(coord{row, col}), state(Cell::State::BASE), mines_around(0)
+Cell::Cell(int row, int col) : position(coord{row, col}), state(State::BASE), mines_around(0)
 {
+}
+
+void Cell::reset() {
+    state = State::BASE;
+    mines_around = 0;
 }
 
 // Obtenir la valeur de position.

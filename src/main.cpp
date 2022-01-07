@@ -6,11 +6,18 @@ int main() {
     sf::RenderWindow window;
     window.create(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), L"MinesweeperSFML", sf::Style::Titlebar | sf::Style::Close);
 
-    // Create Field object called field.
-    Field field(ROWS, COLUMNS);
+    // Texte
+    sf::Font font;
+    font.loadFromFile("src/res/VT323-Regular.ttf");
 
-    //
-    bool game_over = false;
+    // Création de field.
+    Field field(font);
+
+    // Rectangle de fond.
+    sf::RectangleShape rectangle(sf::Vector2f(RECT_WIDTH, RECT_HEIGHT));
+    rectangle.setPosition(0, WIN_HEIGHT - RECT_HEIGHT);
+    rectangle.setFillColor(sf::Color(0x1A1A1AFF));
+    
 
     while (window.isOpen()) {
 
@@ -23,9 +30,21 @@ int main() {
                 window.close();
             }
 
-            // Fermer la fenêtre quand on appuie sur Échap.
             if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::Escape) window.close();
+
+                switch (event.key.code) {
+
+                    // Fermer la fenêtre quand on appuie sur Échap.
+                    case sf::Keyboard::Escape:
+                        window.close();
+                        break;
+                    
+                    // Redémarrer la partie avec Entrée.
+                    case sf::Keyboard::Enter:
+                        field.reset();
+                        std::cout << "Game reset.\n";
+                        break;
+                }
             }
 
             if (field.get_state() == Field::State::GOING) {
@@ -45,27 +64,24 @@ int main() {
                         case sf::Mouse::Right:
                             field.flag(cell_position_row, cell_position_col);
                             break;
-
                     }
                 }
             }
 
         }  // end of event loop
 
-        if (!game_over) {
+        if (!field.is_game_over()) {
 
             if (field.get_discovered() == ROWS * COLUMNS - MINES) {
-            field.set_state(Field::State::WON);
+                field.set_state(Field::State::WON);
             }
 
             if (field.get_state() == Field::State::LOST) {
-                game_over = true;
+                field.over();
                 std::cout << "Perdu !\n";
-                // Afficher le jeu perdu.
-                // Ne pas pouvoir recommencer (pour l'instant).
             }
             else if (field.get_state() == Field::State::WON) {
-                game_over = true;
+                field.over();
                 std::cout << "Gagné !\n";
             }
         }
@@ -73,7 +89,8 @@ int main() {
         // Affichage.
         window.clear(sf::Color::Black);
 
-        field.display(window);
+        window.draw(rectangle);
+        field.draw(window);
 
         window.display();
 

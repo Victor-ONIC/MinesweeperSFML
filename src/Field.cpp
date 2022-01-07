@@ -2,15 +2,46 @@
 
 
 // Constructeur.
-Field::Field(int rows, int cols) : state(Field::State::GOING), first_digging(false), discovered(0) {
+Field::Field(sf::Font &font) : state(State::GOING), first_digging(false), discovered(0), flags(0), game_over(false) {
 
-    for (int i_row = 0; i_row < rows; i_row++) {
-        for (int i_col = 0; i_col < cols; i_col++) {
+    for (int i_row = 0; i_row < ROWS; i_row++) {
+        for (int i_col = 0; i_col < COLUMNS; i_col++) {
             Cell cell(i_row, i_col);
             matrix.push_back(cell);
         }
     }
 
+    text.setFont(font);
+    text.setFillColor(sf::Color::White);
+    text.setCharacterSize(TEXT_SIZE);
+    text.setString("Mines:" + std::to_string(MINES));
+    text.setPosition(MARGIN_X, WIN_HEIGHT - (MARGIN_Y + TEXT_SIZE));
+
+}
+
+void Field::reset() {
+
+    for (int i_row = 0; i_row < ROWS; i_row++) {
+        for (int i_col = 0; i_col < COLUMNS; i_col++) {
+            get_cell(i_row, i_col)->reset();
+        }
+    }
+
+    game_over = false;
+    discovered = 0;
+    flags = 0;
+    first_digging = false;
+    state = State::GOING;
+
+    update_text(text);
+
+}
+
+void Field::over() {
+    game_over = true;
+}
+bool Field::is_game_over() {
+    return game_over;
 }
 
 // Renvoie la Cell à l'emplacement [row,col] du jeu.
@@ -36,20 +67,32 @@ void Field::flag(int row, int col) {
 
         case Cell::State::BASE:
             get_cell(row, col)->set_state(Cell::State::FLAG_BASE);
+            flags++;
+            update_text(text);
             break;
 
         case Cell::State::MINE:
             get_cell(row, col)->set_state(Cell::State::FLAG_MINE);
+            flags++;
+            update_text(text);
             break;
             
         case Cell::State::FLAG_BASE:
             get_cell(row, col)->set_state(Cell::State::BASE);
+            flags--;
+            update_text(text);
             break;
             
         case Cell::State::FLAG_MINE:
             get_cell(row, col)->set_state(Cell::State::MINE);
+            flags--;
+            update_text(text);
             break;   
     }
+}
+
+void Field::update_text(sf::Text &text) {
+    text.setString("Mines:" + std::to_string(MINES - flags));
 }
 
 // Creuse.
@@ -167,7 +210,7 @@ void Field::init_mines_around() {
 }
 
 // Displays the game matrix to the window.
-void Field::display(sf::RenderWindow &window) {
+void Field::draw(sf::RenderWindow &window) {
 
     sf::Texture texture;
     sf::Sprite cellule;
@@ -185,7 +228,7 @@ void Field::display(sf::RenderWindow &window) {
                     break;
 
                 case Cell::State::MINE:
-                    if (state != Field::State::GOING) {
+                    if (state == Field::State::LOST) {
                         texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(720, 0, 60, 60));
                         cellule.setTexture(texture);
                         break;
@@ -239,5 +282,7 @@ void Field::display(sf::RenderWindow &window) {
             window.draw(cellule);
         }
     }
+
+    window.draw(text);
 
 }
