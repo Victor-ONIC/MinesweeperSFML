@@ -6,7 +6,7 @@ int main() {
     sf::RenderWindow window;
     window.create(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), L"MinesweeperSFML", sf::Style::Titlebar | sf::Style::Close);
 
-    // Texte
+    // Police du texte.
     sf::Font font;
     font.loadFromFile("src/res/VT323-Regular.ttf");
 
@@ -73,7 +73,7 @@ int main() {
                 }
             }
 
-        }  // end of event loop
+        }  // end of event loop.
 
         if (!field.is_game_over()) {
 

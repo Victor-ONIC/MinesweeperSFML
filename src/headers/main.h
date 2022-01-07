@@ -3,8 +3,8 @@
 #include "Field.h"
 
 
-// Constantes
-constexpr int CELL_SIZE = 60;  // ne pas changer
+// Constantes.
+constexpr int CELL_SIZE = 60;
 
 constexpr int ROWS = 9;
 constexpr int COLUMNS = 9;

@@ -19,6 +19,7 @@ Field::Field(sf::Font &font) : state(State::GOING), marc_state(Feeling::IDLE), f
 
 }
 
+// Réinitialise les valeurs du jeu.
 void Field::reset() {
 
     for (int i_row = 0; i_row < ROWS; i_row++) {
@@ -38,6 +39,7 @@ void Field::reset() {
 
 }
 
+// Passe game_over à true pour verrouiller le jeu.
 void Field::over() {
     game_over = true;
 
@@ -48,6 +50,7 @@ void Field::over() {
         set_Marc(Feeling::PROUD);
     }
 }
+// Obtienir la valeur de game_over.
 bool Field::is_game_over() {
     return game_over;
 }
@@ -57,17 +60,21 @@ Cell *Field::get_cell(int row, int col) {
     return &matrix[row * COLUMNS + col];
 }
 
+// Obtenir la valeur de state.
 Field::State Field::get_state() const {
     return state;
 }
+// Définir la valeur de state.
 void Field::set_state(Field::State new_state) {
     state = new_state;
 }
 
+// Obtenir la valeur de discovered.
 int Field::get_discovered() const {
     return discovered;
 }
 
+// Définir l'état de Marc.
 void Field::set_Marc(Feeling feeling) {
     marc_state = feeling;
 }
@@ -103,13 +110,15 @@ void Field::flag(int row, int col) {
     }
 }
 
+// Mettre à jour le texte.
 void Field::update_text(sf::Text &text) {
     text.setString("Mines:" + std::to_string(MINES - flags));
 }
 
-// Creuse.
+// Creuser.
 void Field::dig(int row, int col) {
 
+    // Ne générer les mines qu'après la première creusée.
     if (!first_digging) {
         first_digging = true;
         init_mines(row, col);
@@ -121,6 +130,7 @@ void Field::dig(int row, int col) {
         return;
     }
 
+    // Si la case creusée est une mine, la partie est perdue.
     if (get_cell(row, col)->get_state() == Cell::State::MINE) {
         get_cell(row, col)->set_state(Cell::State::BOOM);
         set_state(Field::State::LOST);
@@ -163,7 +173,7 @@ void Field::init_mines(int row, int col) {
 
     for (int i_mines = 0; i_mines < MINES; i_mines++) {
 
-        // Si la case hasard est déjà une mine, ou si elle est autour de la première case creusée, on recommence.
+        // Si la case hasard est déjà une mine, ou si elle est autour de la première case creusée, on change hasard.
         while (get_cell(random_row, random_col)->get_state() == Cell::State::MINE || surroundings(row, col, random_row, random_col)) {
             random_row = rand() % ROWS;
             random_col = rand() % COLUMNS;
@@ -192,10 +202,10 @@ void Field::init_mines_around() {
 
             // Si la case contient une mine, on met mines_around à -1.
             if (get_cell(i_row, i_col)->get_state() == Cell::State::MINE) {
-                get_cell(i_row, i_col)->increment_mines_around(9);
+                get_cell(i_row, i_col)->increment_mines_around(-1);
             }
             else {
-                // Compter les mines autour de la case [i_row,i_col]
+                // Compter les mines autour de la case [i_row,i_col].
                 for (int i = -1; i < 2; i++) {
                     for (int j = -1; j < 2; j++) {
 
@@ -221,10 +231,10 @@ void Field::init_mines_around() {
 
 }
 
-// Display
+// Display.
 void Field::draw(sf::RenderWindow &window) {
 
-    // La matrice du jeu
+    // La matrice du jeu.
     sf::Texture texture;
     sf::Sprite cellule;
 
@@ -233,7 +243,7 @@ void Field::draw(sf::RenderWindow &window) {
         for (int i_col = 0; i_col < COLUMNS; i_col++) {
 
             // Texture de la cellule selon l'état de la case.
-            switch (get_cell(i_row, i_col)->get_state()) {  // PATH
+            switch (get_cell(i_row, i_col)->get_state()) {
 
                 case Cell::State::BASE:
                     texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(0, 0, 60, 60));
@@ -296,13 +306,14 @@ void Field::draw(sf::RenderWindow &window) {
         }
     }
 
-    // Le texte
+    // Le texte.
     window.draw(text);
 
-    // Marc
+    // Marc.
     sf::Texture Marc_texture;
     sf::Sprite Marc;
 
+    // Texture de Marc selon son état.
     switch (marc_state) {
 
         case Feeling::IDLE:
@@ -326,6 +337,7 @@ void Field::draw(sf::RenderWindow &window) {
             break;
     }
 
+    // Positionnement de Marc.
     float Marc_position_X = WIN_WIDTH - (CELL_SIZE + MARC_MARGIN_X);
     float Marc_position_Y = WIN_HEIGHT - (CELL_SIZE + MARC_MARGIN_Y);
     Marc.setPosition(Marc_position_X, Marc_position_Y);

@@ -31,7 +31,7 @@ public:
     void draw(sf::RenderWindow &window);
 
 private:
-    std::vector<Cell> matrix;  // matrix_i,j = matrix[i*COLUMNS+j]
+    std::vector<Cell> matrix;
     State state;
     sf::Text text;
     Feeling marc_state;
