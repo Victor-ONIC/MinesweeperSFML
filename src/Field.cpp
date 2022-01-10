@@ -2,7 +2,7 @@
 
 
 // Constructeur.
-Field::Field(sf::Font &font) : state(State::GOING), marc_state(Feeling::IDLE), first_digging(false), discovered(0), flags(0), game_over(false) {
+Field::Field(sf::Font &font) : state(State::GOING), marc_state(Feeling::IDLE), first_digging(false), discovered(0), flags(0) {
 
     for (int i_row = 0; i_row < ROWS; i_row++) {
         for (int i_col = 0; i_col < COLUMNS; i_col++) {
@@ -28,7 +28,6 @@ void Field::reset() {
         }
     }
 
-    game_over = false;
     discovered = 0;
     flags = 0;
     first_digging = false;
@@ -37,22 +36,6 @@ void Field::reset() {
 
     update_text(text);
 
-}
-
-// Passe game_over à true pour verrouiller le jeu.
-void Field::over() {
-    game_over = true;
-
-    if (state == State::LOST) {
-        set_Marc(Feeling::DEAD);
-    }
-    else if (state == State::WON) {
-        set_Marc(Feeling::PROUD);
-    }
-}
-// Obtienir la valeur de game_over.
-bool Field::is_game_over() {
-    return game_over;
 }
 
 // Renvoie la Cell à l'emplacement [row,col] du jeu.
@@ -134,6 +117,7 @@ void Field::dig(int row, int col) {
     if (get_cell(row, col)->get_state() == Cell::State::MINE) {
         get_cell(row, col)->set_state(Cell::State::BOOM);
         set_state(Field::State::LOST);
+        set_Marc(Feeling::DEAD);
         return;
     }
 
@@ -256,6 +240,11 @@ void Field::draw(sf::RenderWindow &window) {
                         cellule.setTexture(texture);
                         break;
                     }
+                    else if (state == Field::State::WON) {
+                        texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(120, 0, 60, 60));
+                        cellule.setTexture(texture);
+                        break;
+                    }
                     else {
                         texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(0, 0, 60, 60));
                         cellule.setTexture(texture);
@@ -309,6 +298,9 @@ void Field::draw(sf::RenderWindow &window) {
     }
 
     // Le texte.
+    if (state == Field::State::WON) {
+        text.setString("Mines:0");
+    }
     window.draw(text);
 
     // Marc.

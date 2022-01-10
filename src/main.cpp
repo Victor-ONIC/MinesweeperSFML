@@ -4,7 +4,7 @@ int main() {
 
     // Création de la fenêtre immuable.
     sf::RenderWindow window;
-    window.create(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), L"MinesweeperSFML", sf::Style::Titlebar | sf::Style::Close);
+    window.create(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), "MinesweeperSFML", sf::Style::Titlebar | sf::Style::Close);
 
     // Police du texte.
     sf::Font font;
@@ -42,7 +42,6 @@ int main() {
                     // Redémarrer la partie avec Entrée.
                     case sf::Keyboard::Enter:
                         field.reset();
-                        std::cout << "Game reset.\n";
                         break;
                 }
             }
@@ -75,20 +74,10 @@ int main() {
 
         }  // end of event loop.
 
-        if (!field.is_game_over()) {
-
-            if (field.get_discovered() == ROWS * COLUMNS - MINES) {
-                field.set_state(Field::State::WON);
-            }
-
-            if (field.get_state() == Field::State::LOST) {
-                field.over();
-                std::cout << "Perdu !\n";
-            }
-            else if (field.get_state() == Field::State::WON) {
-                field.over();
-                std::cout << "Gagné !\n";
-            }
+        // Condition de victoire.
+        if (field.get_discovered() >= ROWS * COLUMNS - MINES) {
+            field.set_state(Field::State::WON);
+            field.set_Marc(Field::Feeling::PROUD);
         }
 
         // Affichage.

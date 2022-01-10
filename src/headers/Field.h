@@ -6,7 +6,6 @@
 #include <cstdlib>
 
 #include "main.h"
-#include "Cell.h"
 
 
 class Field {
@@ -21,7 +20,6 @@ public:
     Cell *get_cell(int row, int col);
     State get_state() const;
     int get_discovered() const;
-    bool is_game_over();
 
     void over();
     void set_state(State);
@@ -39,8 +37,6 @@ private:
     bool first_digging;
     int discovered;
     int flags;
-
-    bool game_over;
 
     void init_mines(int row, int col);
     bool surroundings(int row, int col, int random_row, int random_col);
