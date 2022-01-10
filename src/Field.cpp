@@ -279,6 +279,8 @@ void Field::draw(sf::RenderWindow &window) {
                 
                 case Cell::State::BOOM:
                     texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(660, 0, 60, 60));
+                    cellule.setTexture(texture);
+                    break;
 
                 case Cell::State::DUG:
                     int number = get_cell(i_row, i_col)->get_mines_around();
