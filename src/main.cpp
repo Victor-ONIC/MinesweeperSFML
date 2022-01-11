@@ -75,7 +75,7 @@ int main() {
         }  // end of event loop.
 
         // Condition de victoire.
-        if (field.get_discovered() >= ROWS * COLUMNS - MINES) {
+        if (field.get_discovered() == ROWS * COLUMNS - MINES) {
             field.set_state(Field::State::WON);
             field.set_Marc(Field::Feeling::PROUD);
         }
