@@ -1,9 +1,10 @@
 #include "Field.h"
 
 
-// Constructeur.
+/// Constructeur.
 Field::Field(sf::Font &font) : state(State::GOING), marc_state(Feeling::IDLE), first_digging(false), discovered(0), flags(0) {
 
+    // Création de la matrice du jeu.
     for (int i_row = 0; i_row < ROWS; i_row++) {
         for (int i_col = 0; i_col < COLUMNS; i_col++) {
             Cell cell(i_row, i_col);
@@ -11,6 +12,7 @@ Field::Field(sf::Font &font) : state(State::GOING), marc_state(Feeling::IDLE), f
         }
     }
 
+    // Initialisation des paramètres du texte.
     text.setFont(font);
     text.setFillColor(sf::Color::White);
     text.setCharacterSize(TEXT_SIZE);
@@ -19,7 +21,7 @@ Field::Field(sf::Font &font) : state(State::GOING), marc_state(Feeling::IDLE), f
 
 }
 
-// Réinitialise les valeurs du jeu.
+/// Réinitialise les valeurs du jeu.
 void Field::reset() {
 
     for (int i_row = 0; i_row < ROWS; i_row++) {
@@ -38,31 +40,31 @@ void Field::reset() {
 
 }
 
-// Renvoie la Cell à l'emplacement [row,col] du jeu.
+/// Renvoie la Cell à l'emplacement [row,col] du jeu.
 Cell *Field::get_cell(int row, int col) {
     return &matrix[row * COLUMNS + col];
 }
 
-// Obtenir la valeur de state.
+/// Obtenir la valeur de state.
 Field::State Field::get_state() const {
     return state;
 }
-// Définir la valeur de state.
+/// Définir la valeur de state.
 void Field::set_state(Field::State new_state) {
     state = new_state;
 }
 
-// Obtenir la valeur de discovered.
+/// Obtenir la valeur de discovered.
 int Field::get_discovered() const {
     return discovered;
 }
 
-// Définir l'état de Marc.
+/// Définir l'état de Marc.
 void Field::set_Marc(Feeling feeling) {
     marc_state = feeling;
 }
 
-// Pose un drapeau s'il n'y en a pas. Le retire s'il y en a déjà un.
+/// Pose un drapeau s'il n'y en a pas. Le retire s'il y en a déjà un.
 void Field::flag(int row, int col) {
 
     switch (get_cell(row, col)->get_state()) {
@@ -93,12 +95,12 @@ void Field::flag(int row, int col) {
     }
 }
 
-// Mettre à jour le texte.
+/// Mettre à jour le texte.
 void Field::update_text(sf::Text &text) {
     text.setString("Mines:" + std::to_string(MINES - flags));
 }
 
-// Creuser.
+/// Creuse.
 void Field::dig(int row, int col) {
 
     // Ne générer les mines qu'après la première creusée.
@@ -131,6 +133,7 @@ void Field::dig(int row, int col) {
             for (int j = -1; j < 2; j++) {
                 
                 // Si la case est out of bounds, on ne la creuse pas.
+                // On ignore aussi la case [row,col] elle-même.
                 if ((i == 0 && j == 0) || row + i < 0 || row + i >= ROWS || col + j < 0 || col + j >= COLUMNS) {
                     continue;
                 }
@@ -149,7 +152,7 @@ void Field::dig(int row, int col) {
 
 }
 
-// Crée MINES mines placées aléatoirement.
+/// Crée MINES mines placées aléatoirement.
 void Field::init_mines(int row, int col) {
     srand(time(NULL));
     int random_row = rand() % ROWS;
@@ -169,7 +172,7 @@ void Field::init_mines(int row, int col) {
 
 }
 
-// Renvoie true si la case [random_row, random_col] est dans un carré 3x3 autour de la case [row,col].
+/// Renvoie true si la case [random_row, random_col] est dans un carré 3x3 autour de la case [row,col].
 bool Field::surroundings(int row, int col, int random_row, int random_col) {
     bool condition = (
         (random_row >= row - 1) && (random_row <= row + 1) &&
@@ -178,7 +181,7 @@ bool Field::surroundings(int row, int col, int random_row, int random_col) {
     return condition;
 }
 
-// Pour chaque case, on calcule le nombre de mines dans son entourage.
+/// Pour chaque case, on calcule le nombre de mines dans son entourage.
 void Field::init_mines_around() {
 
     for (int i_row = 0; i_row < ROWS; i_row++) {
@@ -215,14 +218,15 @@ void Field::init_mines_around() {
 
 }
 
-// Display.
+/// Dessine tous les éléments du jeu sur la fenêtre.
 void Field::draw(sf::RenderWindow &window) {
 
-    // La matrice du jeu.
+    // La matrice du jeu -----
+
     sf::Texture texture;
     sf::Sprite cellule;
 
-    // On déplace le même rectangle pour chaque case, puis on dessine.
+    // On déplace le même rectangle pour chaque case, puis on le dessine.
     for (int i_row = 0; i_row < ROWS; i_row++) {
         for (int i_col = 0; i_col < COLUMNS; i_col++) {
 
@@ -297,13 +301,15 @@ void Field::draw(sf::RenderWindow &window) {
         }
     }
 
-    // Le texte.
+    // Le texte -----
+
     if (state == Field::State::WON) {
         text.setString("Mines:0");
     }
     window.draw(text);
 
-    // Marc.
+    // Marc -----
+
     sf::Texture Marc_texture;
     sf::Sprite Marc;
 

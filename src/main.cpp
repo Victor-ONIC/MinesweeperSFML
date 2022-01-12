@@ -10,7 +10,7 @@
 
 int main() {
 
-    // Création de la fenêtre immuable.
+    // Création d'une fenêtre immuable.
     sf::RenderWindow window;
     window.create(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), "MinesweeperSFML", sf::Style::Titlebar | sf::Style::Close);
 
@@ -18,7 +18,7 @@ int main() {
     sf::Font font;
     font.loadFromFile("src/res/VT323-Regular.ttf");
 
-    // Création de field.
+    // Création du jeu.
     Field field(font);
 
     // Rectangle de fond.
