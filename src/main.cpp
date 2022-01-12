@@ -1,3 +1,11 @@
+// Démineur - Victor ONIC
+//
+// Contrôles:
+// Clic gauche: creuser
+// Clic droit: drapeau
+// Échap: fermer
+// Entrée: rejouer
+
 #include "main.h"
 
 int main() {
