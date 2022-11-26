@@ -12,7 +12,11 @@ int main() {
 
     // Création d'une fenêtre immuable.
     sf::RenderWindow window;
-    window.create(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), "MinesweeperSFML", sf::Style::Titlebar | sf::Style::Close);
+    window.create(
+        sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), 
+        "MinesweeperSFML", 
+        sf::Style::Titlebar | sf::Style::Close
+    );
 
     // Police du texte.
     sf::Font font;
@@ -33,7 +37,8 @@ int main() {
         sf::Event event;
         while (window.pollEvent(event)) {
 
-            // Fermer la fenêtre quand on appuie sur la croix ou autre event de type close.
+            // Fermer la fenêtre quand on appuie sur la croix ou 
+            // autre event de type close.
             if (event.type == sf::Event::Closed) {
                 window.close();
             }

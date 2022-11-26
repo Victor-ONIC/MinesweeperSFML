@@ -2,7 +2,8 @@
 
 
 /// Constructeur.
-Field::Field(sf::Font &font) : state(State::GOING), marc_state(Feeling::IDLE), first_digging(false), discovered(0), flags(0) {
+Field::Field(sf::Font &font) 
+    : state(State::GOING), marc_state(Feeling::IDLE), first_digging(false), discovered(0), flags(0) {
 
     // Création de la matrice du jeu.
     for (int i_row = 0; i_row < ROWS; i_row++) {
@@ -134,7 +135,11 @@ void Field::dig(int row, int col) {
                 
                 // Si la case est out of bounds, on ne la creuse pas.
                 // On ignore aussi la case [row,col] elle-même.
-                if ((i == 0 && j == 0) || row + i < 0 || row + i >= ROWS || col + j < 0 || col + j >= COLUMNS) {
+                if ((i == 0 && j == 0) || 
+                    row + i < 0 || 
+                    row + i >= ROWS || 
+                    col + j < 0 || 
+                    col + j >= COLUMNS) {
                     continue;
                 }
 
@@ -160,8 +165,10 @@ void Field::init_mines(int row, int col) {
 
     for (int i_mines = 0; i_mines < MINES; i_mines++) {
 
-        // Si la case hasard est déjà une mine, ou si elle est autour de la première case creusée, on change hasard.
-        while (get_cell(random_row, random_col)->get_state() == Cell::State::MINE || surroundings(row, col, random_row, random_col)) {
+        // Si la case hasard est déjà une mine, ou si elle est autour de la 
+        // première case creusée, on change hasard.
+        while (get_cell(random_row, random_col)->get_state() == Cell::State::MINE || 
+            surroundings(row, col, random_row, random_col)) {
             random_row = rand() % ROWS;
             random_col = rand() % COLUMNS;
         }
@@ -172,7 +179,8 @@ void Field::init_mines(int row, int col) {
 
 }
 
-/// Renvoie true si la case [random_row, random_col] est dans un carré 3x3 autour de la case [row,col].
+/// Renvoie true si la case [random_row, random_col] est dans un carré 3x3 
+// autour de la case [row,col].
 bool Field::surroundings(int row, int col, int random_row, int random_col) {
     bool condition = (
         (random_row >= row - 1) && (random_row <= row + 1) &&
@@ -234,44 +242,68 @@ void Field::draw(sf::RenderWindow &window) {
             switch (get_cell(i_row, i_col)->get_state()) {
 
                 case Cell::State::BASE:
-                    texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(0, 0, 60, 60));
+                    texture.loadFromFile(
+                        "src/res/sprites60x60.png", 
+                        sf::IntRect(0, 0, 60, 60)
+                    );
                     cellule.setTexture(texture);
                     break;
 
                 case Cell::State::MINE:
                     if (state == Field::State::LOST) {
-                        texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(720, 0, 60, 60));
+                        texture.loadFromFile(
+                            "src/res/sprites60x60.png", 
+                            sf::IntRect(720, 0, 60, 60)
+                        );
                         cellule.setTexture(texture);
                         break;
                     }
                     else if (state == Field::State::WON) {
-                        texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(120, 0, 60, 60));
+                        texture.loadFromFile(
+                            "src/res/sprites60x60.png", 
+                            sf::IntRect(120, 0, 60, 60)
+                        );
                         cellule.setTexture(texture);
                         break;
                     }
                     else {
-                        texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(0, 0, 60, 60));
+                        texture.loadFromFile(
+                            "src/res/sprites60x60.png", 
+                            sf::IntRect(0, 0, 60, 60)
+                        );
                         cellule.setTexture(texture);
                         break;
                     }
 
                 case Cell::State::FLAG_BASE:
                     if (state != Field::State::GOING) {
-                        texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(780, 0, 60, 60));
+                        texture.loadFromFile(
+                            "src/res/sprites60x60.png", 
+                            sf::IntRect(780, 0, 60, 60)
+                        );
                         cellule.setTexture(texture);
                         break;
                     }
-                    texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(120, 0, 60, 60));
+                    texture.loadFromFile(
+                        "src/res/sprites60x60.png", 
+                        sf::IntRect(120, 0, 60, 60)
+                    );
                     cellule.setTexture(texture);
                     break;
 
                 case Cell::State::FLAG_MINE:
-                    texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(120, 0, 60, 60));
+                    texture.loadFromFile(
+                        "src/res/sprites60x60.png", 
+                        sf::IntRect(120, 0, 60, 60)
+                    );
                     cellule.setTexture(texture);
                     break;
                 
                 case Cell::State::BOOM:
-                    texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(660, 0, 60, 60));
+                    texture.loadFromFile(
+                        "src/res/sprites60x60.png", 
+                        sf::IntRect(660, 0, 60, 60)
+                    );
                     cellule.setTexture(texture);
                     break;
 
@@ -279,12 +311,18 @@ void Field::draw(sf::RenderWindow &window) {
                     int number = get_cell(i_row, i_col)->get_mines_around();
 
                     if (number == 0) {
-                        texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(60, 0, 60, 60));
+                        texture.loadFromFile(
+                            "src/res/sprites60x60.png", 
+                            sf::IntRect(60, 0, 60, 60)
+                        );
                         cellule.setTexture(texture);
                         break;
                     }
                     else {
-                        texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(120 + number * 60, 0, 60, 60));
+                        texture.loadFromFile(
+                            "src/res/sprites60x60.png", 
+                            sf::IntRect(120 + number * 60, 0, 60, 60)
+                        );
                         cellule.setTexture(texture);
                         break;
                     } 
@@ -317,22 +355,34 @@ void Field::draw(sf::RenderWindow &window) {
     switch (marc_state) {
 
         case Feeling::IDLE:
-            Marc_texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(840, 0, 60, 60));
+            Marc_texture.loadFromFile(
+                "src/res/sprites60x60.png", 
+                sf::IntRect(840, 0, 60, 60)
+            );
             Marc.setTexture(Marc_texture);
             break;
 
         case Feeling::SCARED:
-            Marc_texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(900, 0, 60, 60));
+            Marc_texture.loadFromFile(
+                "src/res/sprites60x60.png", 
+                sf::IntRect(900, 0, 60, 60)
+            );
             Marc.setTexture(Marc_texture);
             break;
 
         case Feeling::PROUD:
-            Marc_texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(960, 0, 60, 60));
+            Marc_texture.loadFromFile(
+                "src/res/sprites60x60.png", 
+                sf::IntRect(960, 0, 60, 60)
+            );
             Marc.setTexture(Marc_texture);
             break;
 
         case Feeling::DEAD:
-            Marc_texture.loadFromFile("src/res/sprites60x60.png", sf::IntRect(1020, 0, 60, 60));
+            Marc_texture.loadFromFile(
+                "src/res/sprites60x60.png", 
+                sf::IntRect(1020, 0, 60, 60)
+            );
             Marc.setTexture(Marc_texture);
             break;
     }
